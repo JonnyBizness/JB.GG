@@ -1,17 +1,24 @@
 {
-"update_url": "https://clients2.google.com/service/update2/crx",
+  "update_url": "https://clients2.google.com/service/update2/crx",
   "manifest_version": 3,
-  "name": "StartGG better UI",
+  "name": "JB.GG",
   "description": "Tiny improvments to the start.gg ui.",
   "version": "1.0.0",
-   "content_scripts": [
+  "content_scripts": [
     {
-      "matches":["https://*.start.gg/*", "http://*.start.gg/*", "https://start.gg/*"],
-      "js": ["inserted.js"]
+      "matches": [
+        "https://*.start.gg/*",
+        "http://*.start.gg/*",
+        "https://start.gg/*"
+      ],
+      "js": [
+        "inserted.js"
+      ]
     }
-    ],
-   "icons": {
-    "16":"icon16.png",
-    "48":"icon48.png"
-    }
+  ],
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
 }
