@@ -1,0 +1,17 @@
+{
+"update_url": "https://clients2.google.com/service/update2/crx",
+  "manifest_version": 3,
+  "name": "StartGG better UI",
+  "description": "Tiny improvments to the start.gg ui.",
+  "version": "1.0.0",
+   "content_scripts": [
+    {
+      "matches":["https://*.start.gg/*", "http://*.start.gg/*", "https://start.gg/*"],
+      "js": ["inserted.js"]
+    }
+    ],
+   "icons": {
+    "16":"icon16.png",
+    "48":"icon48.png"
+    }
+}
