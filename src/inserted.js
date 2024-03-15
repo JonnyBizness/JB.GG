@@ -52,21 +52,29 @@ const startMatch = (clickedElement, e) => {
 
 
 
+const refreshStartMatchTimerButton = (quickMatchContainer) => {
+	let originalContainer = quickMatchContainer.parentElement.parentElement.parentElement;
 
-// Adds the start match button to the on hover buttons
-const addStartMatchTimerButton = (quickMatchContainer) => {
-
-	// Exclude already started matches
-	// Exlude matches not ready to be played 
-	// TODO : fix limitations around needing to refresh the page for this restriction to be useful
-	let originalContainer = quickMatchContainer.parentElement.parentElement.parentElement
+	// Shouldn't have a timer in it so remove
 	if(
 		originalContainer.classList.contains('in-progress') ||
-		!originalContainer.classList.contains('playable')	
+		!originalContainer.classList.contains('playable')
 	){
+		console.log('removing timer');
+		originalContainer.classList.remove('start-timer-added');
+		quickMatchContainer.querySelector('.start-timer')?.remove();
 		return;
 	}
 
+	// Maybe should have a container, but already has one.
+	if(originalContainer.classList.contains('start-timer-added')){
+		console.log('skipped, already has.');
+		return;
+	}
+
+	// needs a new timer added.
+	console.log('adding a new timer.');
+	originalContainer.classList.add('start-timer-added');
 	let button = document.createElement('button');
 	button.classList.add("start-timer", "btn", "tappable-component", "mui-o9fdh3");
 	button.innerHTML = '<span class="fa fa-clock-o">';
@@ -76,21 +84,14 @@ const addStartMatchTimerButton = (quickMatchContainer) => {
 
 
 
-let matchingClass = 'match-quick-options'; 
 const observer = new MutationObserver((mutation_record) => {
 
-	// QUICK MATCH
-	for (let mutation of mutation_record) {
-		if (mutation.addedNodes[0]) {
-			if (mutation.addedNodes[0].className?.includes(matchingClass)) {
-				// Found at top of newly added node
-				addStartMatchTimerButton(mutation.addedNodes[0])
-			} else {
-				recurse(mutation.addedNodes[0], matchingClass, addStartMatchTimerButton );
-			}
+	// Adding/Removing Start match timer button.
+	if (document.querySelectorAll('.match-quick-options').length > 0) {	
+		for(const quickmatchContainer of document.querySelectorAll('.match-quick-options')){
+			refreshStartMatchTimerButton(quickmatchContainer);
 		}
 	}
-
 
 	// CHARACTER SELECT
 	// any mutation look for character-selector on the page then focus on it.
