@@ -1,10 +1,6 @@
 console.log('JB.GG Running...');
 
 
-
-
-
-
 const focusOnField = (foundInput) => {
 	foundInput.focus();
 }
@@ -56,7 +52,6 @@ const startMatch = (clickedElement, e) => {
 
 // TODO: this still isn't quite right, we don't need to try remove all of the time.
 // it works though i guess
-
 const refreshStartMatchTimerButton = (quickMatchContainer) => {
 	let originalContainer = quickMatchContainer.parentElement.parentElement.parentElement;
 
@@ -66,7 +61,6 @@ const refreshStartMatchTimerButton = (quickMatchContainer) => {
 		!originalContainer.classList.contains('playable')
 		//&& originalContainer.classList.contains('start-timer-added')
 	){
-		// console.log('removing timer');
 		originalContainer.classList.remove('start-timer-added');
 		quickMatchContainer.querySelector('.start-timer')?.remove();
 		return;
@@ -74,12 +68,8 @@ const refreshStartMatchTimerButton = (quickMatchContainer) => {
 
 	// Maybe should have a container, but already has one.
 	if(originalContainer.classList.contains('start-timer-added')){
-		// console.log('skipped, already has.');
 		return;
 	}
-
-	// needs a new timer added.
-	// console.log('adding a new timer.');
 
 	originalContainer.classList.add('start-timer-added');
 	let button = document.createElement('button');
@@ -91,53 +81,32 @@ const refreshStartMatchTimerButton = (quickMatchContainer) => {
 
 
 const addAdminButtons = (foundLinks) => {
-
 	//data needd:
 	//id: 1096164 & 1098285
 
 	// Read events data
+	// This isn't always populated sadly.
 	let dataElement = document.querySelector("#__NEXT_DATA__");
 	let data = JSON.parse(dataElement.textContent);
 
-
-	// another fluxStoreData
-	// loop em
+	// Loop flux store data till we have events.
 	let eventsData = [];
 	for(let entitie of data.props.pageProps.fluxStoreData){
-		console.log('entity looped?', entitie.entities.event);
-
 		if(entitie.entities.event?.length > 0){
-			console.log('update eventsdata');
 			eventsData = entitie.entities.event;
 		}
 	}
 	
-
-
-	// one working approach sometimes.	
-	// let eventsData = data.props.pageProps.fluxStoreData[0].entities.event;
-	// console.log('have data?', dataElement);
-	// console.log('have events?', eventsData);
-
-	//https://www.start.gg/tournament/jonnybizness-testing/events
-	// events page has no event data in store?
-	// the observer for the links isn't time enough, need to observe for data too?
-	// only a refresh on certain pages gives the event data?
 	if(eventsData.length <= 0){
 		return;
 	}
-
-
-	console.log('we have events, carry on:', eventsData);
 	
 	
 	for(let i = 0; i < foundLinks.length; i++){
 		let link = foundLinks[i];
 
-		// this kind of all g, but sometimes start.gg is removing my added link?
+		// don't add if already added.
 		if(link.classList.contains('admin-added')){
-			console.log('try skip this way instead');
-			console.log(link.classList);
 			return;
 		}
 
@@ -151,7 +120,7 @@ const addAdminButtons = (foundLinks) => {
 
 				let newLink = document.createElement('a');
 				newLink.classList.add("admin-link", "jb-gg", "btn", "tappable-component");
-				newLink.innerHTML = 'Bracket Admin<span class="fa fa-magic">';
+				newLink.innerHTML = '<span class="fa fa-magic"></span><span>Admin</span>';
 
 				let adminLink = link.href
 					.replace('start.gg/tournament/', 'start.gg/admin/tournament/')
@@ -159,21 +128,7 @@ const addAdminButtons = (foundLinks) => {
 					.concat(event.id);
 				newLink.href = adminLink;
 				
-
-
-				// inserting link seems ok but maybe loops
 				link.insertAdjacentElement('afterend', newLink);
-				console.log('link added');
-
-				// try just update.
-				//this is a weird one, the hover kind of changes but doesn't take effect.
-				// also doesn't work when navigateing settings -> public again. //fuck.
-				//link.href = adminLink;
-				// link.classList.add("jb-gg");
-
-				
-
-				// console.log('updated link:', link);
 			}
 		}
 	}
@@ -212,23 +167,8 @@ observer.observe(document.body, {
 });
 
 
-
-
-
-/// try get the tournament data from some data place...
-// eventually move inside observer i guess
-
-
-
-// for(let event of events){
-// 	console.log('found event:', event);
-// 	//admin url?:
-// 	//https://www.start.gg/admin/tournament/jonnybizness-testing/brackets/1096164/1606930/2402798
-// 	let eventUrl = `https://www.start.gg/admin/tournament/jonnybizness-testing/brackets/${event.id}`;
-
-// 	console.log('new event url:', eventUrl);
-
-// 	let eventlink = document.querySelectorAll('[class*=EventItemLink-]');
-// 	console.log('event ink', eventlink);
-
-// }
+// Attempt to try event links from the start also
+window.onload = () => {
+	let eventLinks = document.querySelectorAll('[class*=EventItemLink-]');
+	addAdminButtons(eventLinks);
+}

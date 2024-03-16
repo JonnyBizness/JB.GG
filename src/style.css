@@ -5,3 +5,7 @@
 .jb-gg{
 	color: #F9AF2C;
 }
+
+.admin-link span:first-of-type{
+	margin-right: 8px;
+}
