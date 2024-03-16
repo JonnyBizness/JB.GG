@@ -92,18 +92,43 @@ const refreshStartMatchTimerButton = (quickMatchContainer) => {
 
 const addAdminButtons = (foundLinks) => {
 
+	//data needd:
+	//id: 1096164 & 1098285
+
 	// Read events data
 	let dataElement = document.querySelector("#__NEXT_DATA__");
 	let data = JSON.parse(dataElement.textContent);
-	let eventsData = data.props.pageProps.fluxStoreData[0].entities.event;
+
+
+	// another fluxStoreData
+	// loop em
+	let eventsData = [];
+	for(let entitie of data.props.pageProps.fluxStoreData){
+		console.log('entity looped?', entitie.entities.event);
+
+		if(entitie.entities.event?.length > 0){
+			console.log('update eventsdata');
+			eventsData = entitie.entities.event;
+		}
+	}
+	
+
+
+	// one working approach sometimes.	
+	// let eventsData = data.props.pageProps.fluxStoreData[0].entities.event;
+	// console.log('have data?', dataElement);
+	// console.log('have events?', eventsData);
 
 	//https://www.start.gg/tournament/jonnybizness-testing/events
 	// events page has no event data in store?
 	// the observer for the links isn't time enough, need to observe for data too?
 	// only a refresh on certain pages gives the event data?
-	if(!eventsData){
+	if(eventsData.length <= 0){
 		return;
 	}
+
+
+	console.log('we have events, carry on:', eventsData);
 	
 	
 	for(let i = 0; i < foundLinks.length; i++){
