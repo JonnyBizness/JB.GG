@@ -173,6 +173,23 @@ observer.observe(document.body, {
 	subtree: true
 });
 
+// Title observer
+const titleObserver = new MutationObserver((mutations) => {
+	mutations.forEach((mutation) => {
+		if (mutation.type === 'childList' && mutation.target.nodeName === 'TITLE') {
+			updateTitleBasedOnUrl(); // this is somewhat recursive, but it's necessary as start.gg will change the title multiple times on the same page so it will overwrite it otherwise
+		}
+	});
+});
+
+// Observe changes to the title element
+const titleElement = document.querySelector('title');
+if (titleElement) {
+	titleObserver.observe(titleElement, {
+		childList: true
+	});
+}
+
 let lastUrl;
 
 // Attempt to try event links from the start also
@@ -209,9 +226,27 @@ const updateTitleBasedOnUrl = () => {
 	const url = window.location.href;
 
 	// Change the title of the bracket page to include the title of the bracket
-	if (url.includes('/brackets')) {
-		waitForElm('.MuiTypography-h4').then(elm => {
-			document.title = `${elm.textContent.trim()} - ${document.title}`;
-		});
+	if (url.includes('/brackets') || url.includes('/seeding')) {
+		if (url.includes('/admin')) {			
+			waitForElm('.text-bold-weight').then(elm => {
+				let title = elm.parentElement.childNodes[1].textContent.trim();
+				if (url.includes('seeding')) {
+					title += ' - Seeding'
+				} else {
+					title += ' - Reporting'
+				}
+
+				if (!document.title.includes(title)) {
+					document.title = `${title} - ${document.title}`;
+				}
+			});
+		} else {
+			waitForElm('.MuiTypography-h4').then(elm => {
+				let title = elm.textContent.trim();
+				if (!document.title.includes(title)) {
+					document.title = `${title} - ${document.title}`;
+				}
+			});
+		}
 	}
 };
