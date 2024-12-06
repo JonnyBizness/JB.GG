@@ -15,3 +15,24 @@ const recurse = (parent, searchedClass, toDoOnFind) => {
 	  [...parent.childNodes].forEach((item) => {recurse(item, searchedClass, toDoOnFind)});
 	}
 };
+
+
+function waitForElm(selector) { // https://stackoverflow.com/a/61511955
+    return new Promise(resolve => {
+        if (document.querySelector(selector)) {
+            return resolve(document.querySelector(selector));
+        }
+
+        const observer = new MutationObserver(mutations => {
+            if (document.querySelector(selector)) {
+                observer.disconnect();
+                resolve(document.querySelector(selector));
+            }
+        });
+
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    });
+}
