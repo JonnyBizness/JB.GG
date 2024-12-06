@@ -160,15 +160,58 @@ const observer = new MutationObserver((mutation_record) => {
 		addAdminButtons(eventLinks);
 	}
 
+	// Change the title of the bracket page to include the title of the bracket
+	const currentUrl = window.location.href;
+	if (currentUrl !== lastUrl) {
+		lastUrl = currentUrl;
+		updateTitleBasedOnUrl();
+	}
+
 });
 observer.observe(document.body, {
 	childList: true,
 	subtree: true
 });
 
+let lastUrl;
 
 // Attempt to try event links from the start also
 window.onload = () => {
 	let eventLinks = document.querySelectorAll('[class*=EventItemLink-]');
 	addAdminButtons(eventLinks);
+	lastUrl = window.location.href;
+
+	// Handle history pushState and replaceState for the URL checks
+	const originalPushState = history.pushState;
+	const originalReplaceState = history.replaceState;
+
+	history.pushState = function (...args) {
+		originalPushState.apply(this, args);
+		window.dispatchEvent(new Event("urlchange"));
+	};
+
+	history.replaceState = function (...args) {
+		originalReplaceState.apply(this, args);
+		window.dispatchEvent(new Event("urlchange"));
+	};
+
+	// Add an event listener for `urlchange` for above
+	window.addEventListener("urlchange", () => {
+		const currentUrl = window.location.href;
+		if (currentUrl !== lastUrl) {
+			lastUrl = currentUrl;
+			updateTitleBasedOnUrl();
+		}
+	});
 }
+
+const updateTitleBasedOnUrl = () => {
+	const url = window.location.href;
+
+	// Change the title of the bracket page to include the title of the bracket
+	if (url.includes('/brackets')) {
+		waitForElm('.MuiTypography-h4').then(elm => {
+			document.title = `${elm.textContent.trim()} - ${document.title}`;
+		});
+	}
+};
