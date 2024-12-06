@@ -4,6 +4,11 @@
   "name": "JB.GG",
   "description": "Tiny improvments to the start.gg ui.",
   "version": "1.1.0",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{f5aae74d-0430-4f5c-bd25-af554f9b9819}"
+    }
+  },
   "content_scripts": [
     {
       "matches": [
