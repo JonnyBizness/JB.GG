@@ -3,7 +3,7 @@
   "manifest_version": 3,
   "name": "JB.GG",
   "description": "Tiny improvments to the start.gg ui.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "content_scripts": [
     {
       "matches": [
