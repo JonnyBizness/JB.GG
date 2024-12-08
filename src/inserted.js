@@ -1,5 +1,29 @@
 console.log('JB.GG Running...');
 
+const script = document.createElement('script');
+script.textContent = `
+	${FindReact.toString()}
+	${processEntrant.toString()}
+
+	// Expose functions to the global window object for use
+	// Injected script listens for messages from the content script
+	window.addEventListener("message", (event) => {
+		if (event.data.type === "PROCESS_ENTRANT") {
+			const { index, characterId } = event.data;
+
+			// Find the DOM node for the entrant using the index
+			const entrantNode = document.querySelectorAll(".entrant-list-item")[index];
+			if (entrantNode) {
+				window.processEntrant(entrantNode, characterId);
+			} else {
+				console.error("Entrant node not found at index:", index);
+			}
+		}
+	});
+`;
+
+document.documentElement.appendChild(script);
+script.onload = () => script.remove();
 
 const focusOnField = (foundInput) => {
 	foundInput.focus();
@@ -134,6 +158,36 @@ const addAdminButtons = (foundLinks) => {
 	}
 }
 
+function findPrevCharacters() {
+	const characters = document.querySelectorAll(".match-character");
+	const characterData = {};
+	characters.forEach(character => {
+		const name = character.parentElement.parentElement.querySelector(".match-player-name").querySelector(".match-player-name-container").childNodes[1].textContent;
+		const characterId = character.children[0].src.split("https://images.start.gg/images/character/")[1].split("/")[0];
+		characterData[name] = characterId;
+	});
+	return characterData;
+}
+
+function updateCharacterData() {
+	document.querySelectorAll('.entrant-list-item').forEach((entrant, index) => {
+		let foundCharacters;
+		if (entrant.querySelector(".entrant-reporting-info").querySelector(".character-box").querySelector("img") == null) {
+			if (foundCharacters == null) {
+				foundCharacters = findPrevCharacters();
+			}
+			const tag = entrant.querySelector(".entrant-reporting-info").querySelector(".gamertag-title").textContent;
+			if (foundCharacters[tag] != null) {
+				const characterId = foundCharacters[tag];
+				window.postMessage({
+					type: "PROCESS_ENTRANT",
+					index,
+					characterId
+				}, "*");
+			}
+		}
+	});
+}
 
 // ** //
 // Observers, just looking for changes to then act on.
@@ -152,6 +206,10 @@ const observer = new MutationObserver((mutation_record) => {
 	if (document.querySelector('.character-selector')) {	
 		let input = document.querySelector('.character-selector').querySelectorAll('input');
 		focusOnField(input[0]);
+	}
+
+	if (document.querySelector('.entrant-list-item')) {
+		updateCharacterData();
 	}
 
 	// adding events admin links next to private
