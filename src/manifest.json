@@ -3,7 +3,7 @@
   "manifest_version": 3,
   "name": "JB.GG",
   "description": "Tiny improvments to the start.gg ui.",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "browser_specific_settings": {
     "gecko": {
       "id": "{f5aae74d-0430-4f5c-bd25-af554f9b9819}"
@@ -21,6 +21,12 @@
         "inserted.js"
       ],
       "css": [ "style.css" ]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["helperfunctions.js"],
+      "matches": ["*://*.start.gg/*"]
     }
   ],
   "icons": {
