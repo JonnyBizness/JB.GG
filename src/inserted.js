@@ -1,27 +1,7 @@
 console.log('JB.GG Running...');
 
 const script = document.createElement('script');
-script.textContent = `
-	${FindReact.toString()}
-	${processEntrant.toString()}
-
-	// Expose functions to the global window object for use
-	// Injected script listens for messages from the content script
-	window.addEventListener("message", (event) => {
-		if (event.data.type === "PROCESS_ENTRANT") {
-			const { index, characterId } = event.data;
-
-			// Find the DOM node for the entrant using the index
-			const entrantNode = document.querySelectorAll(".entrant-list-item")[index];
-			if (entrantNode) {
-				window.processEntrant(entrantNode, characterId);
-			} else {
-				console.error("Entrant node not found at index:", index);
-			}
-		}
-	});
-`;
-
+script.src = chrome.runtime.getURL('helperfunctions.js');
 document.documentElement.appendChild(script);
 script.onload = () => script.remove();
 
